@@ -1,11 +1,13 @@
 const express = require('express');
 const path = require('path');
 const logger = require('morgan');
+const passport = require('passport');
 
 const app = express();
 
 require('dotenv').config();
 require('./config/database');
+require('./config/passport');
 
 app.use(logger('dev'));
 app.use(express.json({limit: '50mb'}));
@@ -14,6 +16,7 @@ app.use(express.json({limit: '50mb'}));
 app.use(express.static(path.join(__dirname, 'build')));
 
 // Put API routes here, before the "catch all" route
+app.use('/login', require('./routes/login'));
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/workouts', require('./routes/api/workouts'));
 app.use('/api/tasks', require('./routes/api/tasks'));
