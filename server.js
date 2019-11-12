@@ -14,9 +14,9 @@ app.use(express.json({limit: '50mb'}));
 app.use(express.static(path.join(__dirname, 'build')));
 
 // Put API routes here, before the "catch all" route
-// app.use('/api/users', require('./routes/api/users'));
-// app.use('/api/recipes', require('./routes/api/recipes'));
-// app.use('/api/ingredients', require('./routes/api/ingredients'));
+app.use('/api/users', require('./routes/api/users'));
+app.use('/api/workouts', require('./routes/api/workouts'));
+app.use('/api/tasks', require('./routes/api/tasks'));
 // app.use('/api/mealPlans', require('./routes/api/mealPlans'));
 // app.use('/api/categories', require('./routes/api/categories'));
 
