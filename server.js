@@ -2,8 +2,16 @@ const express = require('express');
 const path = require('path');
 const logger = require('morgan');
 const passport = require('passport');
+const cors = require('cors');
 
 const app = express();
+
+const corsOption = {
+  origin: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  exposedHeaders: ['x-auth-token']
+};
 
 require('dotenv').config();
 require('./config/database');
@@ -11,6 +19,8 @@ require('./config/passport');
 
 app.use(logger('dev'));
 app.use(express.json({limit: '50mb'}));
+app.use(passport.initialize());
+app.use(cors(corsOption));
 
 // app.use(favicon(path.join(__dirname, 'build', 'favicon.ico')));
 app.use(express.static(path.join(__dirname, 'build')));

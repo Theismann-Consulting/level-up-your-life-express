@@ -10,17 +10,17 @@ passport.use(new FacebookStrategy({
   profileFields: ['id', 'displayName', 'email', 'picture']
 },
 function(accessToken, refreshToken, profile, done) {
-    console.log(profile);
-    User.findOne({ 'facebookId': profile.id }, function(err, user) {
+    User.findOne({ 'facebookId': profile.id }, async function(err, user) {
       if (!user) {
-          User.findOne({ 'email': profile._json.email }, function(err, user){
+          await User.findOne({ 'email': profile._json.email }, function(err, user){
               if (err) return cb(err);
               if (user) {
                   if (!user.facebookId) {
-                      user.name = profile.displayName,
-                      user.facebookId = profile.id,
-                      user.avatar = profile.photos[0].value;
-                      user.save(function(err) {
+                    user.facebookName = profile.displayName,
+                    user.facebookEmail = profile._json.email,
+                    user.facebookId = profile.id,
+                    user.facebookAvatar = profile.photos[0].value,
+                    user.save(function(err) {
                           return done(null, user);
                       });
                   } else {
@@ -33,11 +33,12 @@ function(accessToken, refreshToken, profile, done) {
           return done(err);
       };
       if (user) {
-          if (!user.facebookId) {
-              user.name = profile.displayName,
-              user.facebookId = profile.id,
-              user.avatar = profile.photos[0].value;
-              user.save(function(err) {
+        if (!user.facebookId) {
+            user.facebookName = profile.displayName,
+            user.facebookEmail = profile._json.email,
+            user.facebookId = profile.id,
+            user.facebookAvatar = profile.photos[0].value,
+            user.save(function(err) {
                   return done(null, user);
               });
           } else {
@@ -58,13 +59,14 @@ passport.use(new GoogleStrategy({
   function(accessToken, refreshToken, profile, cb) {
     User.findOne({ 'googleId': profile.id }, function(err, user) {
         if (!user) {
-            User.findOne({ 'email': profile._json.email }, function(err, user){
+            User.findOne({ 'googleEmail': profile._json.email },  function(err, user){
                 if (err) return cb(err);
                 if (user) {
                     if (!user.googleId) {
-                        user.name = profile.displayName,
-                        user.googleId = profile.id,
-                        user.avatar = profile.photos[0].value;
+                        user.googleName = profile.displayName;
+                        user.googleId = profile.id;
+                        user.googleAvatar = profile.photos[0].value;
+                        user.googleEmail = profile._json.email;
                         user.save(function(err) {
                             return cb(null, user);
                         });
@@ -79,10 +81,12 @@ passport.use(new GoogleStrategy({
         };
         if (user) {
             if (!user.googleId) {
-                user.name = profile.displayName,
+                user.googleName = profile.displayName,
+                user.googleEmail = profile._json.email,
                 user.googleId = profile.id,
-                user.avatar = profile.photos[0].value;
+                user.googleAvatar = profile.photos[0].value,
                 user.save(function(err) {
+                    console.log(err);
                     return cb(null, user);
                 });
             } else {

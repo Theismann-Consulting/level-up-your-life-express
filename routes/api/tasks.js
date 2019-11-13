@@ -25,12 +25,12 @@ function isLoggedIn(req, res, next) {
 }
 
 function isAdmin(req, res, next) {
-  if (req.user.role === 'Admin') return next();
+  if (req.user.isAdmin === true) return next();
   return res.status(401).json({msg: 'Not Authorized: Please Log In'});
 }
 
 function isContributor(req, res, next) {
-  if (req.user.role === 'Contributor' || req.user.role === 'Admin') return next();
+  if (req.user.role === 'Contributor' || req.user.isAdmin === true) return next();
   return res.status(401).json({msg: 'Not Authorized: Please Log In'});
 }
 

@@ -1,9 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const User = require('../models/user');
-const userCtrl = require('../controllers/users');
-// const tokenService = require('../src/services/tokenService');
 const jwt = require('jsonwebtoken');
 const SECRET = process.env.SECRET;
 
@@ -17,29 +14,33 @@ router.get('/facebook', passport.authenticate(
 ));
     
 router.get('/g-callback', passport.authenticate(
-    'google', { session: false }),
+    'google', { 
+        session: false,
+        failureRedirect: 'http://localhost:3000/login'   
+    }),
     async function(req, res){
         try{
             const token = createJWT(req.user);
-            res.json(token);
-            console.log('success');
+            console.log(token);
+            res.redirect(`http://localhost:3000?token=${token}`);
         }catch (err) {
-            console.log(err);
-            res.status(401).json();
+            res.redirect('http://localhost:3000/login');
         }
     }
 );
 
 router.get('/fb-callback', passport.authenticate(
-    'facebook', { session: false }),
+    'facebook', { 
+        session: false,
+        failureRedirect: 'http://localhost:3000/login'   
+    }),
     async function(req, res){
         try{
             const token = createJWT(req.user);
-            res.json(token);
-            console.log('success');
+            console.log(token);
+            res.redirect(`http://localhost:3000?token=${token}`);
         }catch (err) {
-            console.log(err);
-            res.status(401).json();
+            res.redirect('http://localhost:3000/login');
         }
     }
 );

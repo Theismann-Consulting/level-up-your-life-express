@@ -9,6 +9,8 @@ module.exports = {
   index,
   update,
   show,
+  disconnectGoogle,
+  disconnectFacebook,
   delete :deleteUser
 };
 
@@ -25,7 +27,7 @@ async function index(req, res, next) {
 
 async function show(req, res) {
   try {
-    await User.findById(req.params.id, function(err, res) {
+    await User.findById(req.params.id, function(err, user) {
       res.json({ user });
     });
   } catch(err) {
@@ -61,6 +63,8 @@ async function deleteUser(req, res, next) {
 async function signup(req, res) {
   console.log(req.body);
   const user = new User(req.body);
+  user.google = {};
+  user.facebook = {};
   try {
     await user.save();
     const token = createJWT(user);
@@ -88,6 +92,36 @@ async function login(req, res) {
     return res.status(401).json(err);
   }
 }
+
+async function disconnectGoogle(req, res) {
+  await User.findById(req.params.id, function(err, user){
+    user.googleId = null;
+    user.googleName = null;
+    user.googleEmail = null;
+    user.googleAvatar = null;
+    try {
+      user.save();
+      res.json({ user });
+    } catch(err) {
+      res.status(400).json(err);
+    }
+  });
+};
+
+async function disconnectFacebook(req, res) {
+  await User.findById(req.params.id, function(err, user){
+    user.facebookId = null;
+    user.facebookName = null;
+    user.facebookEmail = null;
+    user.facebookAvatar = null;
+    try {
+      user.save();
+      res.json({ user });
+    } catch(err) {
+      res.status(400).json(err);
+    }
+  });
+};
 
 /*----- Helper Functions -----*/
 
